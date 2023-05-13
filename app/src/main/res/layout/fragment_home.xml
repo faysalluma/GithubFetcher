@@ -11,7 +11,7 @@
     <androidx.appcompat.widget.SearchView
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:id="@+id/searchArtisan"
+        android:id="@+id/searchRepository"
         android:background="@color/silver"
         android:layout_marginBottom="@dimen/marg10"
         app:iconifiedByDefault="false"

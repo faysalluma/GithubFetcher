@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testmobile.data.dto.RepositoryDTO
+import com.example.testmobile.data.network.bodies.results.Repository
 import com.example.testmobile.databinding.FragmentHomeItemBinding
 
 class RepositoryAdapter(private val listener: RepositoryAdapterListener) :
@@ -36,6 +37,14 @@ class RepositoryAdapter(private val listener: RepositoryAdapterListener) :
 
     override fun getItemCount(): Int {
         return repositoryList.size
+    }
+
+    //This method will filter the list
+    //here we are passing the filtered data
+    //and assigning it to the list with notifydatasetchanged method
+    fun filterList(filterdRepositories: List<RepositoryDTO>) {
+        this.repositoryList = filterdRepositories.toMutableList()
+        notifyDataSetChanged()
     }
 
     class MainViewHolder(val binding: FragmentHomeItemBinding) :
