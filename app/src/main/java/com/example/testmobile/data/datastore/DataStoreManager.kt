@@ -15,25 +15,25 @@ import javax.inject.Singleton
 @Singleton
 class DataStoreManager @Inject constructor(@ApplicationContext val context: Context) {
     companion object {
-        private val PACKAGE_KEY = stringPreferencesKey("package")
-        private val MODE_KEY = stringPreferencesKey("mode")
+        private val REPO_NAME_KEY = stringPreferencesKey("reponame")
+        private val USER_NAME_KEY = stringPreferencesKey("username")
     }
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-    val configFlow: Flow<Pair<String,String>> = context.dataStore.data
+    val fullNameFlow: Flow<Pair<String,String>> = context.dataStore.data
         .map { preferences ->
             // No type safety.
             Pair(
-                preferences[PACKAGE_KEY] ?: "",
-                preferences[MODE_KEY]?: ""
+                preferences[REPO_NAME_KEY] ?: "",
+                preferences[USER_NAME_KEY] ?: "",
             )
         }
 
-    suspend fun setConfig(packag: String, mode: String) {
+    suspend fun setFullName(reponame: String, username: String) {
         context.dataStore.edit { datastore ->
-            datastore[PACKAGE_KEY] = packag
-            datastore[MODE_KEY] = mode
+            datastore[REPO_NAME_KEY] = reponame
+            datastore[USER_NAME_KEY] = username
         }
     }
 }

@@ -22,9 +22,6 @@ class HomeViewModel @Inject constructor (
     private val _error = MutableLiveData<Failure?>(null)
     val error: LiveData<Failure?> = _error
 
-    private val _saved = SingleLiveEvent<Boolean?>(null)
-    var saved: MutableLiveData<Boolean?>  = _saved
-
     // Data Flows
     val repositories = Transformations.map(getRepositoryStateUseCase.observe(viewModelScope.coroutineContext+ defaultDispatcher)){ it?.right()}
 

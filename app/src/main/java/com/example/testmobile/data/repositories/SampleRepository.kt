@@ -4,16 +4,20 @@ import android.content.*
 import android.util.Log
 import com.example.testmobile.data.database.dao.RepositoryDao
 import com.example.testmobile.data.datastore.DataStoreManager
+import com.example.testmobile.data.dto.ContributorDTO
 import com.example.testmobile.data.dto.RepositoryDTO
+import com.example.testmobile.data.dtole.BranchDTO
 import com.example.testmobile.data.network.SampleApiInterface
 import com.example.testmobile.data.network.adapters.asDto
+import com.example.testmobile.data.network.bodies.results.Branch
+import com.example.testmobile.data.network.bodies.results.Contributor
 import com.example.testmobile.data.network.bodies.results.Repository
 import com.example.testmobile.domain.repositories.ISampleRepository
 import com.example.testmobile.utils.Either
 import com.example.testmobile.utils.Failure
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,7 +26,7 @@ import javax.inject.Singleton
 @Singleton
 class SampleRepository @Inject constructor(
     private val repositoryDao: RepositoryDao, private val api: SampleApiInterface,
-    @ApplicationContext private val context: Context, private val dataStoreManager: DataStoreManager
+    private val dataStoreManager: DataStoreManager
 ) : ISampleRepository {
     companion object {
         private val TAG = SampleRepository::class.simpleName
@@ -32,6 +36,12 @@ class SampleRepository @Inject constructor(
     /* State Flow's */
     private val _repositories = MutableStateFlow<Either<Failure, List<RepositoryDTO>>?>(null)
     override val repositories: StateFlow<Either<Failure, List<RepositoryDTO>>?> = _repositories
+
+    private val _contributors = MutableStateFlow<Either<Failure, List<ContributorDTO>>?>(null)
+    override val contributors: StateFlow<Either<Failure, List<ContributorDTO>>?> = _contributors
+
+    private val _branches = MutableStateFlow<Either<Failure, List<BranchDTO>>?>(null)
+    override val branches: StateFlow<Either<Failure, List<BranchDTO>>?> = _branches
 
     /* Functions */
     override suspend fun getAllRepositories(): Either<Failure, Boolean> {
@@ -56,6 +66,71 @@ class SampleRepository @Inject constructor(
             _repositories.emit(Either.Left(error))
             return Either.Left(error)
         }
+    }
+
+    override suspend fun getRepositoryContributors(): Either<Failure, Boolean> {
+        // Check if text is stored in datastore
+        val fullname = dataStoreManager.fullNameFlow.firstOrNull()
+        if (fullname != null) {
+            // Search Online
+            try {
+                val response = api.getRepositoryContributors(fullname.first.lowercase(), fullname.second.lowercase()).execute()
+                if (response.isSuccessful) {
+                    Log.i(TAG, "getRepositoryContributors: ${response.body()}")
+                    val contributorsDTO = (response.body() as List<Contributor>).map {
+                        it.asDto()
+                    }
+                    _contributors.emit(Either.Right(contributorsDTO))
+                    return Either.Right(true)
+                } else {
+                    Log.w(TAG, "server error")
+                    val error = Failure.NetworkFailure("Server error : HTTP CODE ERROR ${response.code()}")
+                    _contributors.emit(Either.Left(error))
+                    return Either.Left(error)
+                }
+            } catch (e: IOException) {
+                Log.w(TAG, "an exception occurred: ${e.stackTraceToString()}")
+                val error = Failure.NetworkFailure(e.message ?: "")
+                _contributors.emit(Either.Left(error))
+                return Either.Left(error)
+            }
+        }
+        return Either.Left(Failure.NetworkFailure(""))
+    }
+
+    override suspend fun getRepositoryBranches(): Either<Failure, Boolean> {
+        // Check if text is stored in datastore
+        val fullname = dataStoreManager.fullNameFlow.firstOrNull()
+        if (fullname != null) {
+            // Search Online
+            try {
+                val response = api.getRepositoryBranches(fullname.first.lowercase(), fullname.second.lowercase()).execute()
+                if (response.isSuccessful) {
+                    Log.i(TAG, "getRepositoryContributors: ${response.body()}")
+                    val contributorsDTO = (response.body() as List<Branch>).map {
+                        it.asDto()
+                    }
+                    _branches.emit(Either.Right(contributorsDTO))
+                    return Either.Right(true)
+                } else {
+                    Log.w(TAG, "server error")
+                    val error = Failure.NetworkFailure("Server error : HTTP CODE ERROR ${response.code()}")
+                    _branches.emit(Either.Left(error))
+                    return Either.Left(error)
+                }
+            } catch (e: IOException) {
+                Log.w(TAG, "an exception occurred: ${e.stackTraceToString()}")
+                val error = Failure.NetworkFailure(e.message ?: "")
+                _branches.emit(Either.Left(error))
+                return Either.Left(error)
+            }
+        }
+        return Either.Left(Failure.NetworkFailure(""))
+    }
+
+    override suspend fun saveFullName(reponame: String, username: String): Either<Failure, Boolean> {
+        dataStoreManager.setFullName(reponame, username)
+        return Either.Right(true)
     }
 
 }

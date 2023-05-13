@@ -12,12 +12,12 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.famoco.famocopayapp2apptools"
+        applicationId "com.example.testmobile"
         minSdkVersion 14
         targetSdkVersion 32
         versionCode vcode
         versionName "1.1.0"
-        resValue "string", "app_name", "Famocopay App2app Tools"
+        resValue "string", "app_name", "Test Mobile"
 
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -26,9 +26,9 @@ android {
     signingConfigs {
         release {
             storeFile file("../keystore/keystore.jks")
-            storePassword 'famocopayapp2apptools2023@'
-            keyAlias "famocopayapp2apptools"
-            keyPassword 'famocopayapp2apptools2023@'
+            storePassword 'testmobile2023@'
+            keyAlias "testmobile"
+            keyPassword 'testmobile2023@'
         }
     }
 
@@ -39,7 +39,7 @@ android {
             signingConfig signingConfigs.release
             applicationVariants.all { variant ->
                 variant.outputs.all { output ->
-                    outputFileName = "Famocopayapp2apptools-${variant.name}-${variant.versionName}.apk"
+                    outputFileName = "TestMobile-${variant.name}-${variant.versionName}.apk"
                 }
             }
         }
@@ -102,6 +102,10 @@ dependencies {
 
     // DataStore
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
     // Unit Tests
     testImplementation 'junit:junit:4.13.2'

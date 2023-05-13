@@ -7,11 +7,34 @@ import com.example.testmobile.domain.usecases.*
 import com.example.testmobile.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    @DispatcherDefault defaultDispatcher: CoroutineDispatcher
+    private val saveParamTaskUseCase: SaveParamTaskUseCase
 ) : ViewModel() {
 
+    val createViewPager = MutableLiveData<Boolean>()
+    val loading = MutableLiveData<Boolean>()
+
+    fun setRefreshTabLayout() {
+        loading.value = false   // For close Progress
+        createViewPager.postValue(true)  // For ViewPager
+    }
+
+    fun saveFullName(reponame: String, username: String) {
+        saveParamTaskUseCase.execute(viewModelScope, SaveParamTaskUseCase.Fullname(reponame, username)) {
+            it.apply(::handleFailure, ::handleSampleRetrieved)
+        }
+    }
+
+    private fun handleSampleRetrieved(retrieved: Boolean) {
+        // nothing to do
+    }
+
+    private fun handleFailure(failure: Failure?) {
+        // nothing to do
+    }
 }

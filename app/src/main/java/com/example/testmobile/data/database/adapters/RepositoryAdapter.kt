@@ -1,6 +1,5 @@
 package com.example.testmobile.data.database.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -24,7 +23,6 @@ class RepositoryAdapter(private val listener: RepositoryAdapterListener) :
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val repository = repositoryList[position]
-        Log.i("TAG", "onBindViewHolder: ${repository.languages_url}")
         holder.binding.title.text = repository.full_name
         holder.binding.description.text = repository.description
        /* holder.binding.language.text =repository.languages_url
