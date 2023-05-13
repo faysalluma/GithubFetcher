@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name_title">Github fetcher</string>
+    <string name="enter_your_query">Enter your query</string>
+    <string name="feature_failure">Feature Failure</string>
+</resources>

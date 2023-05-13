@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.famoco.famocopayapp2apptools",
+  "variantName": "release",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 22296010,
+      "versionName": "1.0.0",
+      "outputFile": "Famocopayapp2apptools-release-1.0.0.apk"
+    }
+  ],
+  "elementType": "File"
+}
